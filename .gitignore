@@ -1,0 +1,32 @@
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Model files (we download them at runtime)
+*.pth
+*.h5
+
+# IDE files
+.vscode/
+.idea/
+# Dataset folder
+dataset/
+dataset_small/
+# Ignore datasets
+dataset/
+dataset_small/
+*.h5
+*.pt
+*.ckpt
