@@ -72,10 +72,17 @@ def get_transforms():
 # ============ Load Model ============
 @st.cache_resource
 def load_model():
-    model_path = r"C:\Users\somanathan\pulmo-vision\models\VitFinal30_model.pth"
+    import gdown
+
+    model_path = "VitFinal30_model.pth"
+    google_drive_url = "https://drive.google.com/uc?id=1N53m_EZAiDNuQMu0-8AFFacqvbhVD9wP"
+
+    # Download the model if it doesn't exist
     if not os.path.exists(model_path):
-        st.error("Model file not found! Please check the path.")
-        return None
+        st.warning("Model not found locally. Downloading from Google Drive...")
+        gdown.download(google_drive_url, model_path, quiet=False)
+
+    # Load the model
     weights = models.ViT_B_16_Weights.DEFAULT
     model = models.vit_b_16(weights=weights)
     in_features = model.heads.head.in_features
@@ -86,6 +93,7 @@ def load_model():
     model.eval()
     st.success("✅ Model loaded successfully!")
     return model
+
 
 # ============ Prediction ============
 def predict(image, model):
