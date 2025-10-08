@@ -150,6 +150,8 @@ if 'recent_uploads' not in st.session_state:
 
 # ============ Upload & Analyze ============
 st.header("📤 Upload X-ray Image")
+st.warning("⚠️ Please upload only chest X-ray images. Non-medical images will produce incorrect results.")
+
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg","jpeg","png"])
 
 if uploaded_file:
