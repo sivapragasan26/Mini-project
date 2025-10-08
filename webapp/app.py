@@ -7,7 +7,6 @@ import os
 import matplotlib.pyplot as plt
 from fpdf import FPDF
 from collections import deque
-import gdown  # to download model from Google Drive
 
 # ============ Page config ============
 st.set_page_config(page_title="Chest X-Ray Classifier", page_icon="🫁", layout="wide")
@@ -70,24 +69,17 @@ def get_transforms():
         transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
     ])
 
-# ============ Download model from Google Drive ============
-def download_model(url, output_path):
-    if not os.path.exists(output_path):
-        st.info("Downloading model... please wait.")
-        gdown.download(url, output_path, quiet=False)
-
 # ============ Load Model ============
 @st.cache_resource
 def load_model():
-    model_path = "VitFinal30_model.pth"
-    model_url = "https://drive.google.com/uc?id=YOUR_FILE_ID"  # <-- Replace with your model's Google Drive file ID
-    download_model(model_url, model_path)
-
+    model_path = r"C:\Users\somanathan\pulmo-vision\models\VitFinal30_model.pth"
+    if not os.path.exists(model_path):
+        st.error("Model file not found! Please check the path.")
+        return None
     weights = models.ViT_B_16_Weights.DEFAULT
     model = models.vit_b_16(weights=weights)
     in_features = model.heads.head.in_features
     model.heads = torch.nn.Linear(in_features, len(class_names))
-
     state = torch.load(model_path, map_location=device)
     model.load_state_dict(state)
     model.to(device)
@@ -154,6 +146,7 @@ uploaded_file = st.file_uploader("Choose an image...", type=["jpg","jpeg","png"]
 
 if uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
+    # Mobile-friendly width
     width_img = 400 if st.config.get_option("server.enableCORS") else 300
     st.image(image, caption="Uploaded X-ray Image", width=width_img)
 
@@ -174,6 +167,7 @@ if 'result' in st.session_state:
     probs = res["probabilities"]
     color = "green" if pred == "Normal" else ("red" if pred == "COVID-19" else "orange")
 
+    # Big diagnosis
     st.markdown(
         f"<div class='big-result' style='color:{color};'>🩺 Diagnosis: {pred}</div>",
         unsafe_allow_html=True
@@ -195,7 +189,7 @@ if 'result' in st.session_state:
         note = "✅ No issues detected. Maintain regular checkups."
     st.info(note)
 
-    # Probability Distribution Chart
+    # ================= Probability Distribution Chart =================
     st.subheader("Probability Distribution")
     width = max(6, min(12, len(probs)*2))
     fig, ax = plt.subplots(figsize=(width, 5), dpi=120, facecolor=bg_color)
@@ -213,7 +207,7 @@ if 'result' in st.session_state:
     plt.tight_layout()
     st.pyplot(fig, use_container_width=True, clear_figure=True)
 
-    # Recent uploads
+    # Recent uploads history
     if st.session_state.recent_uploads:
         st.subheader("Recent Uploads")
         cols = st.columns(len(st.session_state.recent_uploads))
