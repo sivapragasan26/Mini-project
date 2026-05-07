@@ -75,7 +75,7 @@ def load_model():
     import gdown
 
     model_path = "VitFinal30_model.pth"
-    google_drive_url = "https://drive.google.com/uc?id=1N53m_EZAiDNuQMu0-8AFFacqvbhVD9wP"
+    google_drive_url = "https://drive.google.com/uc?id=1tlwd-sZwvFDNX1ZFVTXn0BYpB9GkDa9i"
 
     # Download the model if it doesn't exist
     if not os.path.exists(model_path):
